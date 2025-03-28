@@ -245,7 +245,8 @@ function getModif() {
     }
 
 function reponseTicket() {
-    $message = $_POST['message'];
+        $message = $_POST['message'];
+        $page = intval($_GET['page']);
         $account_id = $_SESSION['user_id'];
         $ticket_id = intval($_GET['id']);
         $host = 'localhost';
@@ -260,7 +261,8 @@ function reponseTicket() {
         if ($stmt = $conn->prepare($sql)) {
             $stmt->bind_param("isi", $ticket_id, $message, $account_id);
             if ($stmt->execute()) {
-                header("Location: repondre.php?id=" . $ticket_id . "&success=true");
+                if ($page == 1) {header("Location: consulter.php?id=".$ticket_id."");}
+                if ($page == 2) {header("Location: repondre.php");}
                 exit();
             } else {
                 echo "Erreur lors de la mise à jour du ticket : " . $stmt->error;
@@ -270,5 +272,30 @@ function reponseTicket() {
             echo "Erreur de préparation de la requête : " . $conn->error;
         }
         $conn->close();
+}
+
+function chat($ticket_id, $message, $account_id, $page) {
+    $host = 'localhost';
+    $dbname = 'phpticket_advanced';
+    $username = 'admin';
+    $password = 'admin';
+
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = "INSERT INTO tickets_comments (ticket_id, msg, account_id) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$ticket_id, $message, $account_id]);
+
+        if ($page == 1) {
+            header("Location: consulter.php?id=" . $ticket_id);
+        } elseif ($page == 2) {
+            header("Location: repondre.php");
+        }
+        exit();
+    } catch (PDOException $e) {
+        echo "Erreur lors de l'envoi du message : " . $e->getMessage();
+    }
 }
 ?>

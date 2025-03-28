@@ -142,11 +142,9 @@ $conn->close();
                 <div class="divider-custom-line"></div>
             </div>
             <?php
-            if (isset($_GET['success']) && $_GET['success'] == 'true') {
-                echo '<div class="alert alert-success" role="alert">Le ticket a bien été modifié.</div>';               
-            }
+
             try {           
-                if(@$_POST['reponse']) {
+                if(@$_POST['message']) {
                     require '../ticket.php';
                     reponseTicket();
                 }
@@ -165,7 +163,7 @@ $conn->close();
         </style>
         <div class="row">
             <div class="col me-5">
-            <form action="" method="post">
+            <form action="?page=1&id= <?php echo $ticket_id ?>" method="post">
 
                     <label for="title" class="mb-2">Titre :</label>
                     <input type="text" class="form-control" id="title" name="title" style="width:450px;color: grey;" value="<?php echo htmlspecialchars($ticket['title']); ?>" readonly><br>
@@ -176,14 +174,12 @@ $conn->close();
                     <label for="created" class="mb-2">Date de création :</label>
                     <input type="text" class="form-control" id="created" name="created" value="<?php echo htmlspecialchars($ticket['created']); ?>" style="color: grey;" readonly><br>
                     </select><br>
-            </form>
             </div>
             <div class="col">
-            <form action="" method="post">
                 <div class="box">
                     <div class="row ms-auto chatbot">
-                    <input type="text" class="form-control" class="reponse" name="reponse" placeholder="Taper yunus" style="width:546px;"><br>
-                    <input type="submit" name="reponse" style="width:100px;" class="btn mt-3 mb-3 btn-primary border border-white" value="Envoyer">
+                    <input type="text" class="form-control" class="reponse" name="message" placeholder="Tapez un message..." style="width:647px;" required><br>
+                    <input type="submit" name="send" style="width:100px;position:absolute;right:0;background-color: rgba(var(--bs-secondary-rgb)" class="btn btn-primary" value="Envoyer">
                     </div>
                 </div>
             </form>
